@@ -840,8 +840,8 @@ body.desktop-mode .orientation-lock-overlay {
 }
 
 /* 2. MODO MOBILE EM PAISAGEM (HORIZONTAL - ANDROID & iOS):
-   Mantém a proporção arcade 16:9 sem esticar, com bordas elegantes nas
-   laterais e topo/fundo centralizados na tela do celular. */
+   Ocupa a tela cheia horizontal com um margin/padding bem leve e uniforme nas 4 extremidades
+   (respeitando áreas de notch/gestos) sem barras pretas laterais exageradas. */
 @media (max-height: 600px) and (orientation: landscape),
        (hover: none) and (pointer: coarse) and (orientation: landscape),
        (max-width: 960px) and (orientation: landscape) {
@@ -853,7 +853,7 @@ body.desktop-mode .orientation-lock-overlay {
         height: var(--app-height, 100dvh);
         min-height: var(--app-height, 100dvh);
         max-height: var(--app-height, 100dvh);
-        padding: 6px max(14px, env(safe-area-inset-right)) max(6px, env(safe-area-inset-bottom)) max(14px, env(safe-area-inset-left));
+        padding: 4px max(6px, env(safe-area-inset-right)) max(4px, env(safe-area-inset-bottom)) max(6px, env(safe-area-inset-left));
         margin: 0;
         overflow: hidden;
         position: fixed;
@@ -861,17 +861,17 @@ body.desktop-mode .orientation-lock-overlay {
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
+        justify-content: flex-start;
         box-sizing: border-box;
     }
 
     #arcade-header {
-        width: min(calc((var(--app-height, 100dvh) - 52px) * (16 / 9)), 92vw);
-        max-width: 92vw;
-        border-radius: 8px;
-        padding: 4px 12px;
-        margin-bottom: 5px;
-        gap: 10px;
+        width: 100%;
+        max-width: 100%;
+        border-radius: 6px;
+        padding: 3px 8px;
+        margin-bottom: 3px;
+        gap: 8px;
         flex-shrink: 0;
         border: 1px solid #3d2f66;
     }
@@ -891,21 +891,20 @@ body.desktop-mode .orientation-lock-overlay {
 
     .btn-arcade-sm {
         font-size: 7.5px;
-        padding: 4px 8px;
+        padding: 3px 7px;
         white-space: nowrap;
     }
 
     #arcade-cabinet {
-        /* Mantém proporção perfeita 16:9, evitando tela esticada */
-        height: calc(var(--app-height, 100dvh) - 52px);
-        max-height: calc(var(--app-height, 100dvh) - 52px);
-        width: min(calc((var(--app-height, 100dvh) - 52px) * (16 / 9)), 92vw);
-        max-width: 92vw;
-        aspect-ratio: 16 / 9;
-        flex: none;
-        border: 3px solid #2d2450;
-        border-radius: 12px;
-        box-shadow: 0 0 25px rgba(0, 240, 255, 0.25), 0 8px 25px rgba(0, 0, 0, 0.8);
+        width: 100%;
+        max-width: 100%;
+        flex: 1;
+        min-height: 0;
+        height: auto;
+        aspect-ratio: auto;
+        border: 2px solid #2d2450;
+        border-radius: 8px;
+        box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
     }
 
     /* --- CENA 1: FASE DE CONSUMO (BAR) NO MOBILE HORIZONTAL --- */
