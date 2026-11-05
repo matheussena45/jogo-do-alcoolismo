@@ -69,6 +69,13 @@ export class VisualEffectsPipeline {
         const w = canvas.width;
         const h = canvas.height;
 
+        // 0. Desfoque progressivo acelerado por GPU (compatível com iOS Safari e Android Chrome)
+        const blurPx = distortion.blurPx || 0;
+        const targetFilter = blurPx > 0.25 ? `blur(${blurPx.toFixed(1)}px)` : 'none';
+        if (canvas.style.filter !== targetFilter) {
+            canvas.style.filter = targetFilter;
+        }
+
         // 1. Visão Dupla / Ghosting (Diplopia Alcoólica)
         if (distortion.ghostingOffsetPx > 1.0 && distortion.ghostingAlpha > 0.05) {
             ctx.save();

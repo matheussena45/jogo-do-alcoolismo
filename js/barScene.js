@@ -191,12 +191,6 @@ export class BarScene {
 
         const distorcao = globalState.getDistorcaoVisual(this.tempo);
 
-        if (distorcao.desfoquePx > 0.2) {
-            ctx.filter = `blur(${distorcao.desfoquePx}px)`;
-        } else {
-            ctx.filter = 'none';
-        }
-
         // Cenário elegante e neutro de confraternização
         this.desenharCenarioNeutro(ctx, w, h);
 
@@ -206,8 +200,6 @@ export class BarScene {
         const posY = h * 0.52;
 
         spriteRenderer.desenharPersonagem(ctx, posX, posY, tamanhoPersonagem, globalState.nivelAlcool, this.tempo);
-
-        ctx.filter = 'none';
 
         visualEffects.applyPostProcessing(ctx, this.canvas, {
             blurPx: distorcao.desfoquePx,

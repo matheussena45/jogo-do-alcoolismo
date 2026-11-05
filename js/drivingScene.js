@@ -756,7 +756,6 @@ export class DrivingScene {
             horizonTiltRad: distorcao.oscilacaoCameraRad,
             horizonPitchPx: 0
         }, w, h);
-        ctx.filter = distorcao.desfoquePx > 0.2 ? `blur(${distorcao.desfoquePx}px)` : 'none';
 
         this.desenharCeuNoturno(ctx, w, h);
         this.desenharPista(ctx, w, h);
@@ -775,7 +774,6 @@ export class DrivingScene {
             this.desenharCaixaDebug(ctx, playerX - larguraHit / 2, playerY - playerH * 0.6, larguraHit, playerH * 0.6, '#22c55e');
         }
 
-        ctx.filter = 'none';
         ctx.restore();
 
         visualEffects.applyPostProcessing(ctx, this.canvas, {
