@@ -24,6 +24,11 @@ class GameApp {
         this.barScene = new BarScene(this.canvas, () => this.switchScene('driving'));
         this.drivingScene = new DrivingScene(this.canvas, () => this.switchScene('bar'));
 
+        // Detecta capacidade de toque e adiciona classe auxiliar
+        if (('ontouchstart' in window) || (navigator.maxTouchPoints > 0)) {
+            document.documentElement.classList.add('touch-device');
+        }
+
         this.setupOrientationValidation();
         this.setupMobileZoomLock();
         this.setupGlobalControls();

@@ -847,14 +847,15 @@ body.mobile-portrait .orientation-lock-overlay:not(.hidden) {
    ========================================================================== */
 
 /* 1. MODO DESKTOP:
-   No Desktop o jogo abre sempre normal, sem travas, e esconde os botões touch
-   para deixar a visão da pista limpa para os controles de teclado. */
-body.desktop-mode .touch-controls-container {
+   No Desktop o jogo esconde os botões touch para manter a visão limpa
+   para os controles via teclado.
+   IMPORTANTE: Se estiver em touch (mobile-landscape ou touch-device), NUNCA oculta. */
+body.desktop-mode:not(.mobile-landscape) .touch-controls-container {
     display: none !important;
 }
 
 @media (min-width: 1025px) and (hover: hover) and (pointer: fine) {
-    .touch-controls-container {
+    body:not(.mobile-landscape) .touch-controls-container {
         display: none !important;
     }
 }
@@ -869,12 +870,19 @@ body.desktop-mode .orientation-lock-overlay {
     }
 }
 
+/* Garante exibição explícita dos botões touch na cena de direção no mobile */
+body.mobile-landscape #driving-ui-overlay:not(.hidden) .touch-controls-container,
+.touch-device #driving-ui-overlay:not(.hidden) .touch-controls-container {
+    display: flex !important;
+}
+
 /* 2. MODO MOBILE EM PAISAGEM (HORIZONTAL - ANDROID & iOS):
    Aproveita a tela visível real (--app-height / 100dvh), respeita safe-area-insets
-   (Notch / Dynamic Island do iPhone e barra de gestos do Android) e compacta HUDs,
-   cartões e modais para caberem sem cortes. */
+   (Notch / Dynamic Island do iPhone e barra de gestos do Android), adiciona bordas elegantes
+   ao redor para não ficar colado nos cantos e compacta HUDs, cartões e modais. */
 @media (max-height: 600px) and (orientation: landscape),
-       (hover: none) and (pointer: coarse) and (orientation: landscape) {
+       (hover: none) and (pointer: coarse) and (orientation: landscape),
+       (max-width: 960px) and (orientation: landscape) {
     html,
     body {
         width: 100%;
@@ -883,25 +891,27 @@ body.desktop-mode .orientation-lock-overlay {
         height: var(--app-height, 100dvh);
         min-height: var(--app-height, 100dvh);
         max-height: var(--app-height, 100dvh);
-        padding: 0;
+        padding: 4px max(8px, env(safe-area-inset-right)) max(4px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
         margin: 0;
         overflow: hidden;
         position: fixed;
         inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
         justify-content: flex-start;
+        box-sizing: border-box;
     }
 
     #arcade-header {
         width: 100%;
         max-width: 100%;
-        border-radius: 0;
-        padding: 4px max(12px, env(safe-area-inset-right)) 4px max(12px, env(safe-area-inset-left));
-        margin-bottom: 0;
+        border-radius: 8px;
+        padding: 4px 10px;
+        margin-bottom: 4px;
         gap: 10px;
         flex-shrink: 0;
-        border-left: none;
-        border-right: none;
-        border-top: none;
+        border: 1px solid #3d2f66;
     }
 
     .arcade-title {
@@ -929,8 +939,9 @@ body.desktop-mode .orientation-lock-overlay {
         flex: 1;
         min-height: 0;
         height: auto;
-        border: none;
-        border-radius: 0;
+        border: 2px solid #2d2450;
+        border-radius: 10px;
+        box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
         aspect-ratio: auto;
     }
 
