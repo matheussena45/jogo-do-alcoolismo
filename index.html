@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Jogo Educativo – Seminário de Toxicologia | Conscientização sobre Álcool ao Volante</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- Overlay de Trava de Orientação Mobile (Landscape Lock) -->
+    <div id="orientation-lock-overlay" class="orientation-lock-overlay hidden">
+        <div class="orientation-box">
+            <div class="phone-animation">
+                <div class="phone-device">
+                    <div class="phone-screen"></div>
+                </div>
+                <div class="rotate-arrow">↻</div>
+            </div>
+            <h2>MODO PAISAGEM NECESSÁRIO</h2>
+            <p>Por favor, gire o celular para a <strong>posição horizontal (paisagem)</strong> para iniciar a simulação.</p>
+            <span class="retro-sub">SEMINÁRIO DE TOXICOLOGIA – SIMULAÇÃO PSICOMOTORA</span>
+        </div>
+    </div>
+
+    <!-- Cabeçalho Principal -->
+    <header id="arcade-header">
+        <div class="arcade-title">🔬 JOGO EDUCATIVO – SEMINÁRIO DE TOXICOLOGIA</div>
+        <div class="arcade-controls-top">
+            <button id="btn-toggle-sound" class="btn-arcade-sm">🔊 ÁUDIO: ATIVO</button>
+            <button id="btn-reset-game" class="btn-arcade-sm btn-danger">🔄 REINICIAR</button>
+        </div>
+    </header>
+
+    <!-- Container Principal do Simulador -->
+    <main id="arcade-cabinet">
+        <!-- Canvas HTML5 Principal -->
+        <canvas id="game-canvas"></canvas>
+
+        <!-- Efeito de Scanlines CRT dos anos 80/90 -->
+        <div class="crt-overlay"></div>
+
+        <!-- =============================================================
+             FASE 1: FASE DE CONSUMO (Tela Inicial)
+             ============================================================= -->
+        <div id="bar-ui-overlay">
+            <div class="bar-center-container">
+                <!-- Coluna Lateral Esquerda: Bebidas -->
+                <div class="drinks-column" id="bar-drinks-left"></div>
+
+                <!-- O centro da tela é preenchido pelo Canvas com o Protagonista Neutro -->
+
+                <!-- Coluna Lateral Direita: Bebidas -->
+                <div class="drinks-column" id="bar-drinks-right"></div>
+            </div>
+
+            <!-- HUD Inferior da Fase de Consumo -->
+            <div class="bar-bottom-hud">
+                <div class="breathalyzer-hud">
+                    <div class="hud-title-row">
+                        <span>BAFÔMETRO DIGITAL:</span>
+                        <span id="hud-alcohol-value">0%</span>
+                        <span id="hud-alcohol-status" style="color: #2ecc71;">Sóbrio (0.00 g/L)</span>
+                    </div>
+                    <div class="breathalyzer-bar-bg">
+                        <div id="hud-alcohol-fill"></div>
+                    </div>
+                    <div class="hud-consumed-row">
+                        <span>Doses Ingeridas:</span>
+                        <div id="consumed-drinks-list">
+                            <span class="empty-list">Nenhuma bebida ingerida até o momento.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botão para avançar -->
+                <button id="btn-go-drive" class="btn-drive-action">
+                    🚗 Voltar para Casa Dirigindo ➔
+                </button>
+            </div>
+        </div>
+
+        <!-- =============================================================
+             FASE 2: DESAFIO DA DIREÇÃO (Pista Reta & Desvio)
+             ============================================================= -->
+        <div id="driving-ui-overlay" class="hidden">
+            <!-- HUD Superior de Parâmetros Toxicológicos -->
+            <div class="driving-top-hud">
+                <div class="hud-pill" id="hud-speed-value">120 KM/H</div>
+                <div class="hud-pill warning" id="hud-lag-value">ATRASO: +0ms</div>
+                <div class="hud-pill" id="hud-driving-bac">ÁLCOOL: 0%</div>
+                <div class="hud-pill" id="hud-distance-value">CASA: 0m / 1800m</div>
+            </div>
+
+            <!-- Guia de Controles da Direção -->
+            <div class="driving-controls-guide">
+                🎮 Use <strong>[⬅️ / A]</strong> e <strong>[➡️ / D]</strong> ou os botões de toque laterais | Pista Reta Contínua
+            </div>
+
+            <!-- Controles Touch Virtuais para Dispositivos Móveis -->
+            <div class="touch-controls-container">
+                <button id="btn-touch-left" class="btn-touch btn-touch-left" aria-label="Desviar para a Esquerda">
+                    <span class="touch-icon">◀</span>
+                    <span class="touch-label">ESQ</span>
+                </button>
+                <button id="btn-touch-right" class="btn-touch btn-touch-right" aria-label="Desviar para a Direita">
+                    <span class="touch-icon">▶</span>
+                    <span class="touch-label">DIR</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- =============================================================
+             MODAL DE ANÁLISE TOXICOLÓGICA DA BEBIDA (Fase de Consumo)
+             ============================================================= -->
+        <div id="drink-modal" class="modal-backdrop hidden">
+            <div class="retro-modal-window">
+                <div class="modal-header">
+                    <h3>ANÁLISE TOXICOLÓGICA DA SUBSTÂNCIA</h3>
+                    <button id="btn-close-modal" class="modal-close-btn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-drink-hero">
+                        <div class="modal-drink-avatar" id="modal-drink-icon">🍺</div>
+                        <div class="modal-drink-details">
+                            <h4 id="modal-drink-name">Cerveja</h4>
+                            <span id="modal-type-badge" class="modal-badge badge-alcoholic">Contém Etanol</span>
+                        </div>
+                    </div>
+
+                    <div class="modal-specs-grid">
+                        <div class="spec-item">
+                            <span class="spec-label">Teor Alcoólico:</span>
+                            <span class="spec-val" id="modal-drink-abv">4.8% ABV</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Volume da Dose:</span>
+                            <span class="spec-val" id="modal-drink-volume">350 ml</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Classificação Química:</span>
+                            <span class="spec-val" id="modal-drink-type">Fermentada</span>
+                        </div>
+                    </div>
+
+                    <p class="modal-desc-box" id="modal-drink-desc">
+                        Descrição da bebida aqui.
+                    </p>
+
+                    <div class="modal-fact-box">
+                        <strong>🔬 Fundamentação Farmacológica:</strong>
+                        <p id="modal-drink-fact"></p>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button id="btn-confirm-drink" class="btn-drink-confirm">
+                            🧪 INGERIR DOSE
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- =============================================================
+             MODAL DE FEEDBACK ACADÊMICO (Vitória / Sinistro Toxicológico)
+             ============================================================= -->
+        <div id="result-modal" class="modal-backdrop hidden">
+            <div class="retro-modal-window modal-result">
+                <div class="modal-header">
+                    <h3 id="result-title">PARECER TÉCNICO DE CONDUÇÃO</h3>
+                </div>
+                <div class="modal-body">
+                    <div id="result-status-badge" class="result-badge badge-danger">
+                        SINISTRO DE TRÂNSITO REGISTRADO
+                    </div>
+
+                    <div class="result-stats-grid" id="result-stats-content">
+                        <!-- Preenchido dinamicamente via JavaScript com dados de TAS e tempo de reação -->
+                    </div>
+
+                    <div id="result-educational-message">
+                        <!-- Mensagem de conclusão pedagógica/científica -->
+                    </div>
+
+                    <div class="modal-footer">
+                        <button id="btn-retry-driving" class="btn-arcade-sm">
+                            🔁 REFAZER O TRAJETO
+                        </button>
+                        <button id="btn-back-to-bar" class="btn-drink-confirm">
+                            🧪 RETORNAR À FASE DE CONSUMO
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Rodapé Acadêmico Informativo -->
+    <footer id="game-footer">
+        <p>Projeto Educativo – Seminário de Toxicologia | Conscientização sobre os Efeitos do Álcool nas Funções Psicomotoras e Reflexos ao Volante.</p>
+    </footer>
+
+    <!-- Script Principal ES Modules -->
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>
