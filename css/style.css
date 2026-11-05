@@ -423,18 +423,18 @@ body {
 }
 
 /* ==========================================================================
-   CONTROLES TOUCH VIRTUAIS (MOBILE FRIENDLY)
+   CONTROLES TOUCH VIRTUAIS (SEMPRE ATIVOS NA CENA DE DIREÇÃO)
    ========================================================================== */
 
 .touch-controls-container {
     position: absolute;
     inset: 0;
-    display: flex;
+    display: flex !important;
     justify-content: space-between;
     align-items: flex-end;
     padding: 16px 20px;
     pointer-events: none;
-    z-index: 30;
+    z-index: 40;
 }
 
 .btn-touch {
@@ -846,20 +846,7 @@ body.mobile-portrait .orientation-lock-overlay:not(.hidden) {
    ADAPTAÇÕES RESPONSIVAS: DESKTOP VS MOBILE
    ========================================================================== */
 
-/* 1. MODO DESKTOP:
-   No Desktop o jogo esconde os botões touch para manter a visão limpa
-   para os controles via teclado.
-   IMPORTANTE: Se estiver em touch (mobile-landscape ou touch-device), NUNCA oculta. */
-body.desktop-mode:not(.mobile-landscape) .touch-controls-container {
-    display: none !important;
-}
-
-@media (min-width: 1025px) and (hover: hover) and (pointer: fine) {
-    body:not(.mobile-landscape) .touch-controls-container {
-        display: none !important;
-    }
-}
-
+/* Trava de orientação apenas para mobile */
 body.desktop-mode .orientation-lock-overlay {
     display: none !important;
 }
@@ -868,12 +855,6 @@ body.desktop-mode .orientation-lock-overlay {
     .orientation-lock-overlay {
         display: none !important;
     }
-}
-
-/* Garante exibição explícita dos botões touch na cena de direção no mobile */
-body.mobile-landscape #driving-ui-overlay:not(.hidden) .touch-controls-container,
-.touch-device #driving-ui-overlay:not(.hidden) .touch-controls-container {
-    display: flex !important;
 }
 
 /* 2. MODO MOBILE EM PAISAGEM (HORIZONTAL - ANDROID & iOS):
