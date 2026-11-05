@@ -103,14 +103,24 @@ class GameApp {
     }
 
     /**
-     * Validador de Orientação de Tela (Mobile Landscape Lock)
-     * - No DESKTOP: NUNCA exibe a mensagem de girar o aparelho. Abre 100% normal.
-     * - No MOBILE: Se estiver em modo retrato (vertical), bloqueia o gameplay e
-     *   solicita para virar o celular para a posição horizontal (paisagem).
+     * Tenta travar a orientação para horizontal (landscape) via Screen Orientation API
+     * e garante que o jogo nunca fique bloqueado por tela de aviso.
      */
     setupOrientationValidation() {
         const lockOverlay = document.getElementById('orientation-lock-overlay');
-        if (!lockOverlay) return;
+        if (lockOverlay) {
+            lockOverlay.classList.add('hidden');
+        }
+
+        const tentarTravarHorizontal = async () => {
+            try {
+                if (screen.orientation && screen.orientation.lock) {
+                    await screen.orientation.lock('landscape');
+                }
+            } catch (e) {
+                // Navegadores sem suporte silenciam sem quebrar o jogo
+            }
+        };
 
         const updateViewportVars = () => {
             const vv = window.visualViewport;
@@ -122,51 +132,33 @@ class GameApp {
         };
 
         const checkOrientation = () => {
-            const { width, height } = updateViewportVars();
-            const isMobile = this.isMobileDevice();
-
-            // Regra 1: Se for desktop, NUNCA bloqueia. Garante que abre normal.
-            if (!isMobile) {
-                this.isOrientationLocked = false;
-                lockOverlay.classList.add('hidden');
-                document.body.classList.remove('mobile-portrait', 'mobile-landscape');
-                document.body.classList.add('desktop-mode');
-                return;
-            }
-
-            // Regra 2: Se for mobile (Android ou iOS), verifica se está em modo retrato (altura > largura)
-            document.body.classList.remove('desktop-mode');
-            const isPortrait = height > width;
-
-            if (isPortrait) {
-                // Mobile em retrato: Bloqueia e avisa para virar para horizontal
-                this.isOrientationLocked = true;
-                lockOverlay.classList.remove('hidden');
-                document.body.classList.add('mobile-portrait');
-                document.body.classList.remove('mobile-landscape');
-            } else {
-                // Mobile em paisagem: Libera o jogo com layout horizontal adaptado
-                this.isOrientationLocked = false;
-                lockOverlay.classList.add('hidden');
-                document.body.classList.remove('mobile-portrait');
-                document.body.classList.add('mobile-landscape');
-                window.scrollTo(0, 0);
-            }
+            updateViewportVars();
+            // NUNCA bloqueia a gameplay: sempre libera o jogo
+            this.isOrientationLocked = false;
+            if (lockOverlay) lockOverlay.classList.add('hidden');
+            document.body.classList.remove('mobile-portrait');
+            document.body.classList.add('mobile-landscape');
         };
 
-        // Verifica na inicialização e em eventos de rotação, barra de endereço (Android/iOS) ou redimensionamento
         checkOrientation();
+        tentarTravarHorizontal();
+
         window.addEventListener('resize', checkOrientation);
         window.addEventListener('orientationchange', () => {
+            tentarTravarHorizontal();
             setTimeout(checkOrientation, 100);
             setTimeout(checkOrientation, 300);
         });
+
+        // Tenta travar horizontalmente assim que o usuário tocar na tela
+        window.addEventListener('touchstart', () => {
+            tentarTravarHorizontal();
+        }, { once: true });
+
         if (window.visualViewport) {
             window.visualViewport.addEventListener('resize', checkOrientation);
             window.visualViewport.addEventListener('scroll', () => {
-                if (document.body.classList.contains('mobile-landscape')) {
-                    window.scrollTo(0, 0);
-                }
+                window.scrollTo(0, 0);
             });
         }
     }

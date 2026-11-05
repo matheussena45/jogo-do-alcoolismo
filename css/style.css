@@ -482,29 +482,11 @@ body {
 }
 
 /* ==========================================================================
-   TRAVA DE ORIENTAÇÃO (MOBILE LANDSCAPE LOCK)
+   TRAVA DE ORIENTAÇÃO (DESATIVADA - JOGO ABRE DIRETO)
    ========================================================================== */
 
 .orientation-lock-overlay {
-    position: fixed;
-    inset: 0;
-    background: radial-gradient(circle at center, #1b0e36 0%, #06040d 100%);
-    z-index: 99999;
-    display: none; /* OCULTO POR PADRÃO: NUNCA exibe no PC/Desktop */
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-    text-align: center;
-}
-
-.orientation-lock-overlay.hidden,
-.hidden {
     display: none !important;
-}
-
-/* Exibe APENAS no mobile quando o corpo da página estiver com a classe mobile-portrait */
-body.mobile-portrait .orientation-lock-overlay:not(.hidden) {
-    display: flex !important;
 }
 
 .orientation-box {
